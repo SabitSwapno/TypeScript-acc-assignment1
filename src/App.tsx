@@ -1,13 +1,26 @@
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import './App.css';
 import Players from './Components/Players';
 import { IPlayer } from './Interfaces'
 
 const App: FC = () => {
 
+  const getLocalPlayers = () => {
+    let list = localStorage.getItem("playerLists")
+    if (list) {
+      return JSON.parse(localStorage.getItem("playerLists") || "");
+    } else {
+      return [];
+    }
+  }
+
   const [player, setPlayer] = useState<string>("");
   const [role, setRole] = useState<string>("");
-  const [todoList, setTodoList] = useState<IPlayer[]>([]);
+  const [todoList, setTodoList] = useState<IPlayer[]>(getLocalPlayers());
+
+  useEffect(() => {
+    localStorage.setItem("playerLists", JSON.stringify(todoList))
+  }, [todoList])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     if (event.target.name === "player") {
