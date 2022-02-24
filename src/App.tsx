@@ -1,0 +1,68 @@
+import React, { ChangeEvent, FC, useState } from 'react';
+import './App.css';
+import Players from './Components/Players';
+import { IPlayer } from './Interfaces'
+
+const App: FC = () => {
+
+  const [player, setPlayer] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+  const [todoList, setTodoList] = useState<IPlayer[]>([]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    if (event.target.name === "player") {
+      setPlayer(event.target.value);
+    } else {
+      setRole(event.target.value)
+    }
+  }
+
+  const addPlayers = (): void => {
+    const newPlayer = { playersName: player, role: role };
+    setTodoList([...todoList, newPlayer]);
+    setPlayer('');
+    setRole('')
+  }
+
+  const removePlayer = (playerToRemove: string): void => {
+    setTodoList(todoList.filter((player) => {
+      return player.playersName !== playerToRemove
+    }))
+  }
+
+  return (
+    <div className="App">
+      <div className='header pt-5 pb-3'>
+        <h2 style={{
+          color: "white",
+          fontWeight: "600",
+          paddingBottom: "1%"
+        }}>The Vat-Tea-Cup Football Club</h2>
+        <div style={{
+          paddingLeft: "25%",
+          paddingRight: "25%"
+        }} className='inputField'>
+          <div className="input-group mb-3">
+            <input type="text" value={player} name='player' onChange={handleChange} className="form-control" placeholder="Player's Name" aria-label="Player's Name" />
+            <span style={{
+              backgroundColor: "rgb(12, 150, 115)",
+              color: "white"
+            }} className="input-group-text">&</span>
+            <input type="Text" value={role} name='role' onChange={handleChange} className="form-control" placeholder="Role" aria-label="Role" />
+          </div>
+        </div>
+        <button type="button" onClick={addPlayers} className="btn btn-dark">Add The Player</button>
+      </div>
+      <div className='todolist'>
+        <h3 className='py-3 fw-bolder text-light'>The VTC FC Team</h3>
+        {
+          todoList.map((player: IPlayer, key: number) => {
+            return <Players key={key} player={player} removePlayer={removePlayer} />
+          })
+        }
+      </div>
+    </div>
+  );
+}
+
+export default App;
